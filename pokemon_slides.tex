@@ -1,0 +1,340 @@
+\documentclass[11pt]{beamer}
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+\title{Exploring Pokémon Data with Unsupervised Learning}
+\author{Lucien BAUER}
+\institute{Master 2 Data Science\\Université de Strasbourg}
+\date{6 Février 2026}
+
+\begin{document}
+
+\frame{\titlepage}
+
+% ============================================================================
+\begin{frame}{Vue d'ensemble}
+\begin{block}{Objectif}
+Découvrir des patterns cachés dans les données Pokémon en utilisant l'unsupervised learning
+\end{block}
+
+\begin{block}{Datasets}
+\begin{itemize}
+    \item \textbf{Pokémon} : $\sim$1000 Pokémon avec stats (HP, Attack, Defense, etc.)
+    \item \textbf{Moves} : $\sim$900 moves avec descriptions textuelles
+    \item \textbf{Learnset} : Qui apprend quoi ? ($\sim$50 moves/Pokémon en moyenne)
+\end{itemize}
+\end{block}
+
+\begin{block}{Question principale}
+Les Pokémon se regroupent-ils naturellement selon leurs caractéristiques ?
+\end{block}
+\end{frame}
+
+% ============================================================================
+\begin{frame}{Part 1: Understanding the Data}
+
+\begin{columns}[T]
+\column{0.5\textwidth}
+\textbf{Statistiques clés}
+\begin{itemize}
+    \item 1000+ Pokémon
+    \item 900+ moves
+    \item $\sim$50 moves/Pokémon
+    \item 18 types différents
+\end{itemize}
+
+\vspace{0.5cm}
+\textbf{Valeurs manquantes}
+\begin{itemize}
+    \item \texttt{type\_2} : optionnel
+    \item \texttt{power} : 0 pour status
+    \item Approche sémantique
+\end{itemize}
+
+\column{0.5\textwidth}
+% INSTRUCTION: Insérer ici le graphique "Distribution des Types Primaires"
+% depuis le notebook (Part 1, cellule distribution)
+\begin{center}
+\textit{[Graphique: Distribution Types]}
+\end{center}
+
+\vspace{0.3cm}
+\textbf{Observation}
+\begin{itemize}
+    \item Données déséquilibrées
+    \item Water, Normal, Grass surreprésentés
+\end{itemize}
+\end{columns}
+
+\end{frame}
+
+% ============================================================================
+\begin{frame}{Part 2: Clustering - Méthodologie}
+
+\begin{block}{Choix techniques}
+\begin{itemize}
+    \item \textbf{Normalisation} : StandardScaler (préserve structure)
+    \item \textbf{Algorithme} : K-Means (archétypes bien définis)
+    \item \textbf{k=5 clusters} : Elbow + Silhouette ($\sim$0.35-0.40)
+    \item \textbf{Visualisation} : PCA (60\% variance expliquée)
+\end{itemize}
+\end{block}
+
+\begin{center}
+% INSTRUCTION: Insérer ici les graphiques Elbow + Silhouette
+% depuis le notebook (Part 2, cellule Elbow Method)
+\textit{[Graphiques: Elbow Method + Silhouette Score]}
+\end{center}
+
+\end{frame}
+
+% ============================================================================
+\begin{frame}{Part 2: Les 5 Archétypes}
+
+\begin{columns}[T]
+\column{0.5\textwidth}
+% INSTRUCTION: Insérer ici le scatter plot PCA coloré par clusters
+% depuis le notebook (Part 2, cellule Visualisation PCA)
+\begin{center}
+\textit{[Graphique: PCA par Clusters]}
+\end{center}
+
+\column{0.5\textwidth}
+\textbf{Clusters identifiés}
+\begin{enumerate}
+    \item \textcolor{blue}{Fast Sweepers}\\
+    {\small Att. élevée + vitesse}
+    
+    \item \textcolor{red}{Defensive Walls}\\
+    {\small Def. + Def. Spé élevées}
+    
+    \item \textcolor{green}{Special Attackers}\\
+    {\small Att. Spé élevée}
+    
+    \item \textcolor{orange}{Bulky Pokémon}\\
+    {\small HP élevé}
+    
+    \item \textcolor{purple}{Balanced}\\
+    {\small Stats équilibrées}
+\end{enumerate}
+\end{columns}
+
+\end{frame}
+
+% ============================================================================
+\begin{frame}{Part 2: Insight Principal}
+
+\begin{alertblock}{Découverte clé}
+Les clusters NE correspondent PAS aux types officiels !
+\end{alertblock}
+
+\begin{columns}[T]
+\column{0.5\textwidth}
+% INSTRUCTION: Insérer ici la heatmap des stats moyennes par cluster
+% depuis le notebook (Part 2, cellule heatmap)
+\begin{center}
+\textit{[Heatmap: Stats par Cluster]}
+\end{center}
+
+\column{0.5\textwidth}
+\textbf{Interprétation}
+\begin{itemize}
+    \item \textbf{Types} = Résistances élémentaires
+    \item \textbf{Clusters} = Rôles de combat
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Exemple}
+\begin{itemize}
+    \item Un Pokémon Water peut être dans \textit{n'importe quel} cluster selon ses stats
+    \item Le type définit "contre quoi il est fort"
+    \item Le cluster définit "comment il joue"
+\end{itemize}
+\end{columns}
+
+\end{frame}
+
+% ============================================================================
+\begin{frame}{Part 3: Text Analysis}
+
+\begin{block}{TF-IDF sur descriptions des moves}
+Révèle des sous-catégories fines au-delà de physical/special/status
+\end{block}
+
+\begin{center}
+% INSTRUCTION: Insérer ici le tableau des mots caractéristiques
+% ou un graphique comparatif
+\begin{tabular}{lll}
+\toprule
+\textbf{Physical} & \textbf{Special} & \textbf{Status} \\
+\midrule
+damage & user & target \\
+power & special & stage \\
+attack & stat & effect \\
+contact & turn & lowers \\
+physical & target & raises \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.3cm}
+\textbf{Patterns découverts}
+\begin{itemize}
+    \item Healing moves, Status effects, High-damage, Defensive, Stat modification
+    \item Le texte capture la \textbf{mécanique}, pas juste la catégorie
+\end{itemize}
+
+\end{frame}
+
+% ============================================================================
+\begin{frame}{Part 4: Stats vs Moves}
+
+\begin{block}{Question}
+Les Pokémon similaires en stats sont-ils similaires en moves ?
+\end{block}
+
+\textbf{Approche}
+\begin{itemize}
+    \item Représentation move-based : counts + stats moyennes + types
+    \item Comparaison de similarités
+\end{itemize}
+
+\begin{columns}[T]
+\column{0.5\textwidth}
+\textbf{Découverte}
+\begin{itemize}
+    \item Corrélation \textbf{modérée}
+    \item Stats = POTENTIEL
+    \item Moves = OPTIONS
+    \item Les deux sont complémentaires
+\end{itemize}
+
+\column{0.5\textwidth}
+% INSTRUCTION: Insérer ici le scatter plot corrélation similarités
+% ou le tableau de comparaison
+\begin{center}
+\textit{[Graphique: Corrélation\\Stats vs Moves]}
+\end{center}
+\end{columns}
+
+\end{frame}
+
+% ============================================================================
+\begin{frame}{Part 5: Anomaly Detection}
+
+\begin{block}{Méthode}
+Isolation Forest (contamination = 5\%)
+\end{block}
+
+\begin{columns}[T]
+\column{0.5\textwidth}
+% INSTRUCTION: Insérer ici le scatter plot PCA avec outliers en rouge
+% depuis le notebook (Part 5, cellule visualisation outliers)
+\begin{center}
+\textit{[Graphique: Outliers\\dans l'espace PCA]}
+\end{center}
+
+\column{0.5\textwidth}
+\textbf{Résultats}
+\begin{itemize}
+    \item $\sim$5\% outliers (50-60 Pokémon)
+    \item Stats extrêmes ou distributions inhabituelles
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Causes}
+\begin{enumerate}
+    \item Une stat extrême
+    \item BST exceptionnel
+    \item Combinaison rare
+    \item Spécialisation extrême
+\end{enumerate}
+\end{columns}
+
+\end{frame}
+
+% ============================================================================
+\begin{frame}{Part 5: Légendaires vs Normaux}
+
+\begin{alertblock}{Découverte majeure}
+Les légendaires sont 5x plus susceptibles d'être des outliers !
+\end{alertblock}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+& \textbf{Légendaires} & \textbf{Normaux} \\
+& (BST $>$ 580) & \\
+\midrule
+Total & $\sim$100 & $\sim$900 \\
+Outliers & 15-25\% & 3-5\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+\textbf{Interprétation}
+\begin{itemize}
+    \item Design intentionnel : légendaires \textit{doivent} être exceptionnels
+    \item Les choix des développeurs sont \textbf{mathématiquement visibles}
+    \item Pas soumis aux mêmes contraintes d'équilibrage
+\end{itemize}
+
+\end{frame}
+
+% ============================================================================
+\begin{frame}{Conclusion}
+
+\begin{block}{Découvertes principales}
+\begin{enumerate}
+    \item \textbf{5 archétypes} émergent des stats (Fast Sweepers, Walls, etc.)
+    \item Les clusters révèlent des \textbf{rôles de combat}, pas des types
+    \item Le \textbf{text mining} capture des mécaniques au-delà des catégories
+    \item Stats et moves sont \textbf{complémentaires} (potentiel vs options)
+    \item Les légendaires sont \textbf{mathématiquement différents} par design
+\end{enumerate}
+\end{block}
+
+\begin{block}{Insight général}
+L'unsupervised learning révèle la \textbf{structure cachée du game design}
+\end{block}
+
+\end{frame}
+
+% ============================================================================
+\begin{frame}{Limites et Extensions}
+
+\textbf{Limites}
+\begin{itemize}
+    \item K-Means force chaque Pokémon dans un cluster (pas de flou)
+    \item PCA perd 40\% de variance
+    \item Text analysis limité par qualité des descriptions
+\end{itemize}
+
+\vspace{0.5cm}
+\textbf{Extensions possibles}
+\begin{itemize}
+    \item Analyse temporelle : évolution des designs à travers les générations
+    \item Network analysis : graphes de similarité
+    \item Supervised learning : prédire le tier compétitif
+    \item Recommender system : suggérer des équipes équilibrées
+\end{itemize}
+
+\end{frame}
+
+% ============================================================================
+\begin{frame}[standout]
+\Huge Questions ?
+
+\vspace{1cm}
+\normalsize
+Merci pour votre attention !
+\end{frame}
+
+\end{document}

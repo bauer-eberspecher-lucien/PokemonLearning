@@ -1,0 +1,112 @@
+GUIDE : EXTRAIRE LES GRAPHIQUES DU NOTEBOOK POUR LES SLIDES
+============================================================
+
+MÉTHODE 1 : Depuis Google Colab (LE PLUS SIMPLE)
+------------------------------------------------
+
+Pour chaque graphique mentionné dans les slides :
+
+1. Dans Colab, FAIS UN CLIC DROIT sur le graphique
+2. Choisis "Save image as..." ou "Enregistrer l'image sous..."
+3. Nomme le fichier de façon claire (ex: "pca_clusters.png")
+4. Place tous les graphiques dans le même dossier que ton fichier .tex
+
+Graphiques à extraire :
+
+SLIDE 3 (Part 1):
+- Distribution des types primaires (barplot)
+  → Nom suggéré: "types_distribution.png"
+
+SLIDE 4 (Part 2):
+- Elbow Method (line plot avec inertie)
+  → "elbow_method.png"
+- Silhouette Score (line plot)
+  → "silhouette_score.png"
+
+SLIDE 5 (Part 2):
+- PCA scatter plot coloré par clusters (avec centroïdes en rouge)
+  → "pca_clusters.png"
+
+SLIDE 6 (Part 2):
+- Heatmap des stats moyennes par cluster
+  → "heatmap_clusters.png"
+
+SLIDE 8 (Part 4):
+- Scatter plot corrélation similarité stats vs moves
+  (Si tu l'as créé, sinon tu peux le remplacer par le tableau)
+  → "correlation_stats_moves.png"
+
+SLIDE 9 (Part 5):
+- PCA avec outliers en rouge
+  → "outliers_pca.png"
+
+MÉTHODE 2 : Exporter toutes les images en une fois (AVANCÉ)
+------------------------------------------------------------
+
+Si tu veux automatiser, ajoute cette cellule à la fin de ton notebook Colab :
+
+```python
+# Télécharger toutes les figures générées
+from google.colab import files
+import matplotlib.pyplot as plt
+
+# Liste de toutes les figures
+for i in plt.get_fignums():
+    fig = plt.figure(i)
+    filename = f'figure_{i}.png'
+    fig.savefig(filename, dpi=300, bbox_inches='tight')
+    print(f"Saved {filename}")
+```
+
+Puis télécharge-les via le file browser de Colab.
+
+INSÉRER LES GRAPHIQUES DANS LES SLIDES
+---------------------------------------
+
+Dans le fichier pokemon_slides.tex, remplace les lignes :
+
+    \textit{[Graphique: Nom du graphique]}
+
+Par :
+
+    \includegraphics[width=0.9\textwidth]{nom_du_fichier.png}
+
+Exemple :
+
+Avant :
+    \textit{[Graphique: PCA par Clusters]}
+
+Après :
+    \includegraphics[width=0.9\textwidth]{pca_clusters.png}
+
+COMPILER LES SLIDES
+-------------------
+
+1. Place tous les fichiers .png dans le même dossier que pokemon_slides.tex
+
+2. Compile avec pdflatex :
+   pdflatex pokemon_slides.tex
+
+3. Ou utilise Overleaf (upload tous les fichiers)
+
+ALTERNATIVE SI TU N'AS PAS LES GRAPHIQUES
+------------------------------------------
+
+Tu peux compiler les slides SANS les graphiques (elles restent lisibles).
+Les zones [Graphique: ...] montreront juste du texte italique.
+
+C'est suffisant pour répéter ta présentation !
+Mais pour la vraie présentation, ajoute les graphiques.
+
+TIPS
+----
+
+- Utilise des images PNG ou PDF (meilleure qualité)
+- DPI recommandé : 300
+- Taille raisonnable pour ne pas avoir des fichiers énormes
+- Vérifie que les légendes sont lisibles
+
+Si tu as des problèmes, tu peux aussi simplement :
+1. Présenter AVEC Colab ouvert
+2. Montrer les graphiques directement depuis le notebook
+3. Basculer entre les slides PDF et Colab pendant la présentation
