@@ -1,205 +1,135 @@
-SCRIPT ORAL DE PRÉSENTATION
+ORAL PRESENTATION SCRIPT
 Exploring Pokémon Data with Unsupervised Learning
-Lucien BAUER - Master 2 Data Science
-Durée: 6-7 minutes
+Lucien BAUER – Master 2 Data Science
+Duration: 6–7 minutes
+================================================================================
+SLIDE 1: TITLE PAGE (10 seconds)
+Hello everyone. Today I’m going to present my work on exploring Pokémon data using unsupervised learning techniques.
+================================================================================
+SLIDE 2: OVERVIEW (45 seconds)
+The objective of this project was to discover hidden patterns in Pokémon data.
+I worked with three datasets:
+A dataset of one thousand Pokémon with their statistics such as HP, attack, and defense
+A dataset of nine hundred moves with their textual descriptions
+And a dataset that links Pokémon to the moves they can learn
+The main question was: do Pokémon naturally group themselves according to their characteristics? And if so, do these groups correspond to the official types in the game?
+================================================================================
+SLIDE 3: UNDERSTANDING THE DATA (30 seconds)
+Briefly on the exploratory data analysis part.
+I identified missing values that were actually semantically normal. For example, some Pokémon have only one type, so type_2 is empty. Status moves have no power, so the power field is empty. I handled these values appropriately.
+An important observation: the data is imbalanced. Water, Normal, and Grass types are overrepresented, which probably reflects the design choices of the developers.
+================================================================================
+SLIDE 4: CLUSTERING – METHODOLOGY (40 seconds)
+For clustering, I made several methodological choices.
+I used StandardScaler to normalize the data, because the stats have comparable scales and the distributions are relatively normal.
+I chose K-Means as the clustering algorithm because Pokémon have well-defined stat profiles – attackers, defenders, and so on.
+To determine the number of clusters, I used the elbow method and the silhouette score. I chose k equal to five, which represents a good compromise between score and interpretability. The silhouette score is around 0.35 to 0.40, which is reasonable for real-world data.
+For visualization, I used PCA, which explains about 60% of the variance with two components.
+================================================================================
+SLIDE 5: THE 5 ARCHETYPES (50 seconds)
+So here is the result of the clustering in PCA space.
+I identified five distinct archetypes:
+One: Fast Sweepers – Pokémon with high attack and high speed
+Two: Defensive Walls – with high physical and special defenses
+Three: Special Attackers – specialized in special attack
+Four: Bulky Pokémon – with a lot of HP
+Five: Balanced – with well-balanced stats
+What’s interesting is that you can visually see that the clusters are fairly well separated in PCA space, even though we only keep two dimensions.
+
+
+
+
 
 ================================================================================
-SLIDE 1: PAGE DE TITRE (10 secondes)
+SLIDE 6: MAIN INSIGHT (1 minute)
+And now, the most important discovery of this analysis.
+The clusters DO NOT correspond to the official types!
+Look at this heatmap of average stats by cluster. You can clearly see the different profiles.
+But what does that mean?
+In fact, the official types – Fire, Water, Grass – define elemental resistances. Fire beats Grass, Water beats Fire, and so on. It’s the rock-paper-scissors system of the game.
+But the clusters I found define combat ROLES. How the Pokémon plays.
+A concrete example: a Water-type Pokémon can belong to any cluster depending on its stats. If it has high attack and high speed, it will be a Fast Sweeper. If it has high defense, it will be a Defensive Wall.
+The type defines “what it is strong against,” but the cluster defines “how it plays.”
+This is a fundamental distinction between elemental mechanics and combat strategy.
 ================================================================================
-
-Bonjour à tous. Je vais vous présenter mon travail sur l'exploration de données Pokémon avec des techniques d'unsupervised learning.
-
+SLIDE 7: TEXT ANALYSIS (40 seconds)
+For the third part, I analyzed the textual descriptions of moves using TF-IDF.
+The analysis reveals very different characteristic words depending on the category:
+Physical moves: “damage,” “power,” “attack,” “contact”
+Special moves: “user,” “special,” “stat”
+Status moves: “target,” “stage,” “effect,” “lowers,” “raises”
+But more interestingly, I found subcategories that go beyond the official categories. For example, clusters of healing moves, status effect moves, defensive moves, and stat modification moves.
+The text captures the MECHANIC of the move, not just its damage category.
 ================================================================================
-SLIDE 2: VUE D'ENSEMBLE (45 secondes)
+SLIDE 8: STATS VS MOVES (35 seconds)
+In the fourth part, I tried to see whether Pokémon that are similar in stats are also similar in moves.
+I created a representation based on the moves each Pokémon can learn, and then compared similarities.
+Result: there is a moderate correlation. This means that stats and moves capture COMPLEMENTARY aspects.
+Stats define the Pokémon’s POTENTIAL – does it hit hard, can it take damage.
+Moves define the TACTICAL OPTIONS – what it can actually do in practice.
+Both are necessary to understand a Pokémon.
 ================================================================================
+SLIDE 9: ANOMALY DETECTION (40 seconds)
+For anomaly detection, I used Isolation Forest with a contamination of 5%.
+The plot shows the outliers in red in PCA space. We can see that they are often located on the periphery of the clusters.
+I detected around 50 to 60 outlier Pokémon, which is about 5% of the dataset.
+Why are they anomalous? Several reasons:
+Either one stat is extremely high or low
+Or the total stats are exceptional
+Or it is an unusual combination of stats
+Or an extreme specialization
 
-L'objectif de ce projet était de découvrir des patterns cachés dans les données Pokémon. 
 
-J'ai travaillé avec trois datasets :
-- Un dataset de mille Pokémon avec leurs statistiques comme les HP, l'attaque, la défense
-- Un dataset de neuf cents moves avec leurs descriptions textuelles
-- Et un dataset qui lie les Pokémon aux moves qu'ils peuvent apprendre
 
-La question principale était : est-ce que les Pokémon se regroupent naturellement selon leurs caractéristiques ? Et si oui, est-ce que ces groupes correspondent aux types officiels du jeu ?
 
-================================================================================
-SLIDE 3: UNDERSTANDING THE DATA (30 secondes)
-================================================================================
-
-Rapidement sur la partie exploration des données.
-
-J'ai identifié des valeurs manquantes qui étaient en fait sémantiquement normales. Par exemple, certains Pokémon n'ont qu'un seul type, donc type_2 est vide. Les status moves n'ont pas de puissance, donc power est vide. J'ai géré ces valeurs de façon appropriée.
-
-Une observation importante : les données sont déséquilibrées. Les types Water, Normal et Grass sont surreprésentés, ce qui reflète probablement les choix de design des développeurs.
-
-================================================================================
-SLIDE 4: CLUSTERING - MÉTHODOLOGIE (40 secondes)
-================================================================================
-
-Pour le clustering, j'ai fait plusieurs choix méthodologiques.
-
-J'ai utilisé StandardScaler pour normaliser les données, car les stats ont des échelles comparables et les distributions sont relativement normales.
-
-J'ai choisi K-Means comme algorithme de clustering parce que les Pokémon ont des profils de stats bien définis - attaquants, défenseurs, etc.
-
-Pour déterminer le nombre de clusters, j'ai utilisé la méthode du coude et le silhouette score. J'ai choisi k égal cinq, qui représente un bon compromis entre le score et l'interprétabilité. Le silhouette score est d'environ 0.35 à 0.40, ce qui est correct pour des données réelles.
-
-Pour la visualisation, j'ai utilisé PCA qui explique environ 60% de la variance avec deux composantes.
-
-================================================================================
-SLIDE 5: LES 5 ARCHÉTYPES (50 secondes)
-================================================================================
-
-Alors voici le résultat du clustering dans l'espace PCA.
-
-J'ai identifié cinq archétypes distincts :
-
-Un : Les Fast Sweepers - des Pokémon avec une attaque élevée et une grande vitesse
-Deux : Les Defensive Walls - avec des défenses physique et spéciale élevées
-Trois : Les Special Attackers - spécialisés en attaque spéciale
-Quatre : Les Bulky Pokémon - avec beaucoup de HP
-Cinq : Les Balanced - avec des stats équilibrées
-
-Ce qui est intéressant, c'est que vous pouvez voir visuellement que les clusters sont assez bien séparés dans l'espace PCA, même si on ne garde que deux dimensions.
 
 ================================================================================
-SLIDE 6: INSIGHT PRINCIPAL (1 minute)
+SLIDE 10: LEGENDARIES VS NORMAL POKÉMON (50 seconds)
+And now, a major discovery.
+Legendaries are FIVE TIMES more likely to be outliers than normal Pokémon!
+Look at the numbers: 15 to 25% of legendaries are outliers, compared to only 3 to 5% of normal Pokémon.
+What does that mean?
+It means that the intentional design of the developers is mathematically visible in the data. Legendaries are created to be exceptional, unique, powerful. They are not subject to the same balancing constraints as ordinary Pokémon.
+This is a quantitative validation of something all players know intuitively: legendaries are different.
 ================================================================================
-
-Et maintenant, la découverte la plus importante de cette analyse.
-
-Les clusters NE correspondent PAS aux types officiels !
-
-Regardez cette heatmap des stats moyennes par cluster. Vous voyez clairement les profils différents.
-
-Mais qu'est-ce que ça veut dire ?
-
-En fait, les types officiels - Fire, Water, Grass - définissent les résistances élémentaires. Fire bat Grass, Water bat Fire, etc. C'est le système de rock-paper-scissors du jeu.
-
-Mais les clusters que j'ai trouvés, eux, ils définissent les RÔLES de combat. Comment le Pokémon joue.
-
-Un exemple concret : un Pokémon de type Water peut être dans n'importe quel cluster selon ses stats. S'il a une haute attaque et une grande vitesse, il sera dans Fast Sweepers. S'il a une haute défense, il sera dans Defensive Walls.
-
-Le type définit "contre quoi il est fort", mais le cluster définit "comment il joue".
-
-C'est une distinction fondamentale entre la mécanique élémentaire et la stratégie de combat.
-
+SLIDE 11: CONCLUSION (40 seconds)
+To conclude, five main findings:
+One – Five archetypes naturally emerge from the statistics
+Two – These clusters reveal combat roles, not elemental types
+Three – Text mining captures mechanics beyond official categories
+Four – Stats and moves are complementary: potential versus options
+Five – Legendaries are mathematically different by design
+The overall insight is that unsupervised learning can reveal the hidden structure of game design. The developers’ choices, which are often implicit, become visible and quantifiable through data.
 ================================================================================
-SLIDE 7: TEXT ANALYSIS (40 secondes)
+SLIDE 12: LIMITATIONS AND EXTENSIONS (30 seconds)
+A few limitations of the approach.
+K-Means forces each Pokémon into a single cluster; there is no fuzziness. PCA loses 40% of the variance. And the text analysis is limited by the quality of the descriptions.
+In terms of possible extensions, we could do a temporal analysis across generations, network analysis, supervised learning to predict competitive tiers, or even a team recommendation system.
 ================================================================================
-
-Pour la partie trois, j'ai analysé les descriptions textuelles des moves avec TF-IDF.
-
-L'analyse révèle des mots caractéristiques très différents selon la catégorie :
-- Physical moves : "damage", "power", "attack", "contact"
-- Special moves : "user", "special", "stat"  
-- Status moves : "target", "stage", "effect", "lowers", "raises"
-
-Mais plus intéressant, j'ai trouvé des sous-catégories qui vont au-delà des catégories officielles. Par exemple, des clusters de healing moves, de status effects, de moves défensifs, de stat modification.
-
-Le texte capture la MÉCANIQUE du move, pas juste sa catégorie de dégâts.
-
+SLIDE 13: QUESTIONS (5 seconds)
+That’s it, thank you for your attention. I’m ready to answer your questions.
 ================================================================================
-SLIDE 8: STATS VS MOVES (35 secondes)
-================================================================================
+END OF THE PRESENTATION
 
-Dans la partie quatre, j'ai cherché à savoir si les Pokémon similaires en stats sont aussi similaires en moves.
 
-J'ai créé une représentation basée sur les moves que chaque Pokémon peut apprendre, puis comparé les similarités.
 
-Résultat : il y a une corrélation modérée. Ce qui veut dire que stats et moves capturent des aspects COMPLÉMENTAIRES.
 
-Les stats définissent le POTENTIEL du Pokémon - est-ce qu'il frappe fort, est-ce qu'il encaisse bien.
 
-Les moves définissent les OPTIONS TACTIQUES - qu'est-ce qu'il peut faire concrètement.
 
-Les deux sont nécessaires pour comprendre un Pokémon.
-
-================================================================================
-SLIDE 9: ANOMALY DETECTION (40 secondes)
-================================================================================
-
-Pour la détection d'anomalies, j'ai utilisé Isolation Forest avec une contamination de 5%.
-
-Le graphique montre les outliers en rouge dans l'espace PCA. On voit qu'ils sont souvent en périphérie des clusters.
-
-J'ai détecté environ 50 à 60 Pokémon outliers, soit 5% du dataset.
-
-Pourquoi sont-ils anormaux ? Plusieurs raisons :
-- Soit une stat est extrêmement élevée ou basse
-- Soit le total des stats est exceptionnel
-- Soit c'est une combinaison inhabituelle de stats
-- Soit c'est une spécialisation extrême
-
-================================================================================
-SLIDE 10: LÉGENDAIRES VS NORMAUX (50 secondes)
-================================================================================
-
-Et maintenant, une découverte majeure.
-
-Les légendaires sont CINQ FOIS plus susceptibles d'être des outliers que les Pokémon normaux !
-
-Regardez les chiffres : 15 à 25% des légendaires sont des outliers, contre seulement 3 à 5% des Pokémon normaux.
-
-Qu'est-ce que ça veut dire ?
-
-Ça veut dire que le design intentionnel des développeurs est mathématiquement visible dans les données. Les légendaires sont créés pour être exceptionnels, uniques, puissants. Ils ne sont pas soumis aux mêmes contraintes d'équilibrage que les Pokémon ordinaires.
-
-C'est une validation quantitative de quelque chose que tous les joueurs savent intuitivement : les légendaires sont différents.
-
-================================================================================
-SLIDE 11: CONCLUSION (40 secondes)
-================================================================================
-
-Pour conclure, cinq découvertes principales :
-
-Un - Cinq archétypes émergent naturellement des statistiques
-Deux - Ces clusters révèlent des rôles de combat, pas des types élémentaires
-Trois - Le text mining capture des mécaniques au-delà des catégories officielles
-Quatre - Stats et moves sont complémentaires : potentiel versus options
-Cinq - Les légendaires sont mathématiquement différents par design
-
-L'insight général, c'est que l'unsupervised learning peut révéler la structure cachée du game design. Les choix des développeurs, qui sont souvent implicites, deviennent visibles et quantifiables à travers les données.
-
-================================================================================
-SLIDE 12: LIMITES ET EXTENSIONS (30 secondes)
-================================================================================
-
-Quelques limites de l'approche.
-
-K-Means force chaque Pokémon dans un cluster, il n'y a pas de flou. PCA perd 40% de variance. Et l'analyse de texte est limitée par la qualité des descriptions.
-
-En termes d'extensions possibles, on pourrait faire une analyse temporelle à travers les générations, du network analysis, du supervised learning pour prédire le tier compétitif, ou même un système de recommandation d'équipes.
-
-================================================================================
-SLIDE 13: QUESTIONS (5 secondes)
-================================================================================
-
-Voilà, merci pour votre attention. Je suis prêt à répondre à vos questions.
-
-================================================================================
-FIN DE LA PRÉSENTATION
-Durée totale: environ 6-7 minutes
-================================================================================
-
-CONSEILS DE PRÉSENTATION :
-- Parle à un rythme naturel, pas trop rapide
-- Fais des pauses après les points importants
-- Pointe du doigt les graphiques quand tu les mentionnes
-- Regarde le public, pas seulement les slides
-- Sois enthousiaste - c'est un projet cool !
-- Si tu dépasses 7 minutes, tu peux raccourcir les slides 3, 7, ou 12
-
-RÉPONSES AUX QUESTIONS POTENTIELLES :
-
-Q: Pourquoi K-Means et pas DBSCAN ?
-R: DBSCAN nécessite de tuner epsilon et min_samples, et il n'y a pas de notion claire de "bruit" dans les stats des Pokémon. K-Means est plus adapté ici.
-
-Q: Pourquoi PCA et pas t-SNE ou UMAP ?
-R: PCA est déterministe, rapide, et interprétable. t-SNE et UMAP sont bons pour la visualisation mais moins pour l'interprétation quantitative.
-
-Q: Comment gérer le fait que les données sont déséquilibrées ?
-R: Pour le clustering non supervisé, le déséquilibre n'est pas un problème majeur. K-Means cherche juste à minimiser l'inertie, pas à prédire des classes.
-
-Q: Qu'est-ce que ça apporte par rapport à l'analyse manuelle ?
-R: Ça révèle des patterns qui ne sont pas évidents intuitivement. Par exemple, que les clusters ne correspondent pas aux types, ou que les légendaires sont 5x plus outliers.
+Total duration: approximately 6–7 minutes
+PRESENTATION TIPS:
+Speak at a natural pace, not too fast
+Pause after important points
+Point to the charts when you mention them
+Look at the audience, not only at the slides
+Be enthusiastic – it’s a cool project!
+If you go over 7 minutes, you can shorten slides 3, 7, or 12
+ANSWERS TO POTENTIAL QUESTIONS:
+Q: Why K-Means and not DBSCAN?
+A: DBSCAN requires tuning epsilon and min_samples, and there is no clear notion of “noise” in Pokémon stats. K-Means is more suitable here.
+Q: Why PCA and not t-SNE or UMAP?
+A: PCA is deterministic, fast, and interpretable. t-SNE and UMAP are good for visualization but less suitable for quantitative interpretation.
+Q: How do you handle the fact that the data is imbalanced?
+A: For unsupervised clustering, imbalance is not a major issue. K-Means simply minimizes inertia; it does not try to predict classes.
+Q: What does this add compared to manual analysis?
+A: It reveals patterns that are not intuitively obvious. For example, that clusters do not correspond to types, or that legendaries are 5× more likely to be outliers.
